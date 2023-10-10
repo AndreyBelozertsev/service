@@ -9,5 +9,6 @@ class TestController extends Controller
 {
     public function index(Request $request){
         Log::info($request);
+        return response('https://123.ru');   
     }
 }
