@@ -371,8 +371,8 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
         $shape = $currentSlide->createRichTextShape()
                     ->setHeight(500)
-                    ->setWidth(500)
-                    ->setOffsetX(600)
+                    ->setWidth(450)
+                    ->setOffsetX(550)
                     ->setOffsetY(190);
         $shape->getActiveParagraph()->setSpacingAfter(16)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
         $textRun = $shape->createTextRun('На этом графике можно увидеть, какие действия пользователи совершают, перейдя в профиль вашей организации.');
@@ -412,7 +412,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
                         
             $oShape = $currentSlide->createChartShape()
                         ->setHeight(170)
-                        ->setWidth(480)
+                        ->setWidth(430)
                         ->setOffsetX(101)
                         ->setOffsetY(190  + ($i * 200));
             $oShape->getPlotArea()->getAxisX()->setMajorGridlines($oGridLines);
