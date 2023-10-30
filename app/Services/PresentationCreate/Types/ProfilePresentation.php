@@ -371,7 +371,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
         $shape = $currentSlide->createRichTextShape()
                     ->setHeight(500)
-                    ->setWidth(450)
+                    ->setWidth(470)
                     ->setOffsetX(550)
                     ->setOffsetY(190);
         $shape->getActiveParagraph()->setSpacingAfter(16)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
@@ -413,7 +413,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
             $oShape = $currentSlide->createChartShape()
                         ->setHeight(170)
                         ->setWidth(430)
-                        ->setOffsetX(101)
+                        ->setOffsetX(90)
                         ->setOffsetY(190  + ($i * 200));
             $oShape->getPlotArea()->getAxisX()->setMajorGridlines($oGridLines);
             $oShape->getLegend()->setOffsetX(150);
