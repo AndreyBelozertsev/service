@@ -371,7 +371,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
         $shape = $currentSlide->createRichTextShape()
                     ->setHeight(500)
-                    ->setWidth(495)
+                    ->setWidth(520)
                     ->setOffsetX(550)
                     ->setOffsetY(190);
         $shape->getActiveParagraph()->setSpacingAfter(16)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
