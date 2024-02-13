@@ -2,20 +2,21 @@
 
 namespace App\Http\Sections;
 
-use AdminColumn;
-use AdminColumnFilter;
-use AdminDisplay;
 use AdminForm;
+use AdminColumn;
+use AdminDisplay;
+use App\Models\User;
 use AdminFormElement;
+use AdminColumnFilter;
+use SleepingOwl\Admin\Section;
 use Illuminate\Database\Eloquent\Model;
-use SleepingOwl\Admin\Contracts\Display\DisplayInterface;
-use SleepingOwl\Admin\Contracts\Form\FormInterface;
-use SleepingOwl\Admin\Contracts\Initializable;
-use SleepingOwl\Admin\Form\Buttons\Cancel;
 use SleepingOwl\Admin\Form\Buttons\Save;
+use SleepingOwl\Admin\Form\Buttons\Cancel;
+use SleepingOwl\Admin\Contracts\Initializable;
 use SleepingOwl\Admin\Form\Buttons\SaveAndClose;
 use SleepingOwl\Admin\Form\Buttons\SaveAndCreate;
-use SleepingOwl\Admin\Section;
+use SleepingOwl\Admin\Contracts\Form\FormInterface;
+use SleepingOwl\Admin\Contracts\Display\DisplayInterface;
 
 /**
  * Class Client
@@ -29,7 +30,7 @@ class Client extends Section implements Initializable
     /**
      * @var bool
      */
-    protected $checkAccess = false;
+    protected $checkAccess = true;
 
     /**
      * @var string
@@ -122,6 +123,19 @@ class Client extends Section implements Initializable
                 AdminFormElement::select('status', 'Сопровождаемые клиент', config('constant.clients_status'))
                     ->required()
                     ->setDefaultValue(1),
+                AdminFormElement::select('main_user_id', 'Менеджер сопровождения', User::class)
+                    ->required()
+                    ->setDisplay('name'),
+                AdminFormElement::select('feedback_user_id', 'Менеджер по отзывам', User::class)
+                    ->required()
+                    ->setDisplay('name'),
+                AdminFormElement::select('content_user_id', 'Менеджер по контенту', User::class)
+                    ->required()
+                    ->setDisplay('name'),
+                AdminFormElement::select('control_user_id', 'Менеджер по контролю', User::class)
+                    ->required()    
+                    ->setDisplay('name'),
+
                 AdminFormElement::html('<hr>')
             ], 'col-xs-12 col-sm-6 col-md-4 col-lg-4')
         ];

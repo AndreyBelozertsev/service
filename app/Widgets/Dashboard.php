@@ -6,10 +6,6 @@ namespace App\Widgets;
 
 
 use App\Models\Client;
-use Domain\Post\Models\Post;
-use Domain\Case\Models\Portfolio;
-use Domain\Product\Models\Service;
-use Domain\Customer\Models\Customer;
 use SleepingOwl\Admin\Widgets\Widget;
 
 class Dashboard extends Widget

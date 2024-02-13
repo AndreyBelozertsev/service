@@ -9,6 +9,7 @@ use App\Models\ProfileFeedback;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Services\Telegram\TelegramBotApi;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class FeedbackControlService
 {
@@ -76,6 +77,9 @@ class FeedbackControlService
     {
         return ClientProfile::where('status', 1)
                 ->whereHas('client',fn ($query) => $query->where('status', 1))
+                ->with(['client' => function (Builder $query) {
+                    $query->with('feedback_user');
+                }])
                 ->where('created_at', '<', $date2)
                 ->orderBy('title', 'ASC')
                 ->get();
@@ -89,6 +93,7 @@ class FeedbackControlService
                 'title' => 'Название',
                 'start' => 'Начало периода',
                 'end' => 'Окончание периода',
+                'feedback_user' => 'Ответственный за отзывы',
             ]
         ];
         foreach($profiles as $profile){
@@ -96,6 +101,8 @@ class FeedbackControlService
                 'title' => $profile->title,
                 'start' => $this->getStartPeriodCount($profile, $date1, $date2),
                 'end' => $this->getEndPeriodCount($profile, $date1, $date2),
+                'feedback_user' => $profile->client->feedback_user?->name,
+
             ];
         }
         return $result;

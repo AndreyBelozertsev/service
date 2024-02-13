@@ -30,7 +30,7 @@ class Report extends Section implements Initializable
     /**
      * @var bool
      */
-    protected $checkAccess = false;
+    protected $checkAccess = true;
 
     /**
      * @var string

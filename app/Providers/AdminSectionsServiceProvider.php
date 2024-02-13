@@ -14,12 +14,23 @@ class AdminSectionsServiceProvider extends ServiceProvider
         \App\Models\User::class => 'App\Http\Sections\User',
         \App\Models\Client::class => 'App\Http\Sections\Client',
         \App\Models\Report::class => 'App\Http\Sections\Report',
+        \App\Models\Role::class => 'App\Http\Sections\Role',
+        \App\Models\Permission::class => 'App\Http\Sections\Permission',
 
     ];
 
     protected $widgets = [
         \App\Widgets\Logout::class,
         \App\Widgets\Dashboard::class,
+    ];
+
+    protected $policies = [
+        \App\Http\Sections\User::class => \App\Policies\UserPolicy::class,
+        \App\Http\Sections\Client::class => \App\Policies\ClientPolicy::class,
+        \App\Http\Sections\Permission::class => \App\Policies\PermissionPolicy::class,
+        \App\Http\Sections\Report::class => \App\Policies\ReportPolicy::class,
+        \App\Http\Sections\Role::class => \App\Policies\RolePolicy::class,
+
     ];
 
     /**
@@ -37,6 +48,7 @@ class AdminSectionsServiceProvider extends ServiceProvider
         foreach ($this->widgets as $widget) {
             $widgetsRegistry->registerWidget($widget);
         }
+        $this->registerPolicies();
 
         parent::boot($admin);
     }

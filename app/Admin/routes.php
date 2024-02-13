@@ -14,6 +14,9 @@ Route::get('admin/get-statistics', [ReportController::class, 'index'])->name('ad
 
 Route::get('admin/get-report/{id}', [ReportController::class, 'getReport'])->name('admin.get-report');
 
-Route::get('get-feedbacks', [ProfileFeedbackController::class, 'index'])->name('admin.get-feedback');
+Route::get('get-feedbacks', [ProfileFeedbackController::class, 'index'])
+	->middleware('role:admin')
+	->name('admin.get-feedback');
 
-Route::post('get-feedbacks', [ProfileFeedbackController::class, 'getFeedbacksCount']);
+Route::post('get-feedbacks', [ProfileFeedbackController::class, 'getFeedbacksCount'])
+	->middleware('role:admin');
