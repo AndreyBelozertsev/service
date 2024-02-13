@@ -124,16 +124,12 @@ class Client extends Section implements Initializable
                     ->required()
                     ->setDefaultValue(1),
                 AdminFormElement::select('main_user_id', 'Менеджер сопровождения', User::class)
-                    ->required()
                     ->setDisplay('name'),
                 AdminFormElement::select('feedback_user_id', 'Менеджер по отзывам', User::class)
-                    ->required()
                     ->setDisplay('name'),
                 AdminFormElement::select('content_user_id', 'Менеджер по контенту', User::class)
-                    ->required()
                     ->setDisplay('name'),
-                AdminFormElement::select('control_user_id', 'Менеджер по контролю', User::class)
-                    ->required()    
+                AdminFormElement::select('control_user_id', 'Менеджер по контролю', User::class)  
                     ->setDisplay('name'),
 
                 AdminFormElement::html('<hr>')

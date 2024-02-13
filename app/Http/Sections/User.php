@@ -131,7 +131,7 @@ class User extends Section implements Initializable
                     ->setValidationRules('string','max:255')
                     ->required(),
                 AdminFormElement::text('email', 'email')
-                    ->setValidationRules([Rule::unique('users')->ignore($id)]),
+                    ->setValidationRules([Rule::unique('users')]),
                 AdminFormElement::select('status', 'Активный', config('constant.users_status'))
                     ->required()
                     ->setDefaultValue(1),
