@@ -33,6 +33,9 @@ class FeedbackControlService
                 $difference = $feedback_count - $prev['feedback_count'];
                 if($difference > 0){
                     $text .= "{$profile->title} - $difference \n";
+                    if(isset($profile->client->feedback_user->name)){
+                        $text .= "Ответственный за отзывы - {$profile->client->feedback_user->name} \n\n"; 
+                    }
                     ProfileFeedback::insert($profile_feedback);
                 }
             }
@@ -49,6 +52,9 @@ class FeedbackControlService
         $profile = ClientProfile::where('status', 1)
                 ->whereHas('client',fn ($query) => $query->where('status', 1))
                 ->where('id', '>=', $this->getProfileId())
+                ->with(['client' => function (Builder $query) {
+                    $query->with('feedback_user');
+                }])
                 ->orderBy('id', 'ASC')
                 ->limit(1)
                 ->get();

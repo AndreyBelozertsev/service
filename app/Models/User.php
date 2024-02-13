@@ -43,4 +43,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function main_profiles(): HasMany
+    {
+        return $this->hasMany(Client::class, 'main_manager_id');
+    }
+
+    public function feedback_profiles(): HasMany
+    {
+        return $this->hasMany(Client::class, 'feedback_manager_id');
+    }
+
+    public function content_profiles(): HasMany
+    {
+        return $this->hasMany(Client::class, 'content_manager_id');
+    }
+
+    public function control_profiles(): HasMany
+    {
+        return $this->hasMany(Client::class, 'control_manager_id');
+    }
 }
