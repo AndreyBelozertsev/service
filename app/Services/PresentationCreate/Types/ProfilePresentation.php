@@ -19,6 +19,16 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 {
     protected $dataSlide2 = [];
 
+    protected $dataSlide4 = [];
+
+
+    protected $actionList = [
+        'site' => 0, 
+        'call' => 0, 
+        'route' => 0, 
+        'social' => 0
+    ];
+
     public function __construct($report)
 	{
         parent::__construct($report);
@@ -55,7 +65,12 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
            $this->slide6($address['address']);
         }
 
-        $this->slide7();
+
+        foreach($this->addresses as $address){
+            $this->slide7($address['address']);
+         }
+
+        $this->slide8();
 
         return $this->makeFile();
     }
@@ -122,18 +137,24 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
             foreach($param as $string){
                 $service = Str::replace('.', '', $string['service']);
                 $servTranslate = config("yandex-config.services.$service");
+                if(! isset($this->dataSlide4[$address][$servTranslate]['total'] )){
+                    $this->dataSlide4[$address][$servTranslate]['total'] = 0;
+                }
+                if(! isset($this->dataSlide4[$address][$servTranslate]['params'] )){
+                    $this->dataSlide4[$address][$servTranslate]['params'] = $this->actionList;
+                }
+                
                 $services[] = $servTranslate;
             }
         }
         $uniqueServices = collect($services)->unique();
-
+        
         foreach($dataRaw as $key => $param){
     
             $key = Str::replace('.', '', $key);
             $key = config("yandex-config.periods.$key");
             $total[$key]=0;
            foreach($param as $string){
-                
                 $service = Str::replace('.', '', $string['service']);
                 $servTranslate = config("yandex-config.services.$service");
                 $services[] = $servTranslate;
@@ -141,6 +162,10 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
                     $data[$key][$servTranslate] = 0;
                 }
                 $data[$key][$servTranslate] += $string->value;
+
+                if($key == 'Текущий период'){
+                    $this->dataSlide4[$address][$servTranslate]['total'] += $string->value;
+                }
                 $total[$key] += $string->value;
             }
             foreach($uniqueServices as $service){
@@ -231,34 +256,36 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
         $oShape->getPlotArea()->getAxisX()->setTitle('');
         $oShape->getPlotArea()->getAxisY()->setTitle('');
         $oShape->getPlotArea()->setType($oBarChart);
-            
 
     }
 
 
     public function slide3($address){
-
         $currentSlide = $this->objPHPPowerPoint->createSlide();
 
         $dataRaw = $this->report->params()->where('report_id', $this->report->id)
                                 ->where('address', $address)
                                 ->whereIn('param',['site','route','call'])
                                 ->get()->groupBy('param');
-        
- 
+
         $data=[];
         $total = '';
         $totalValue = 0;
-     
         foreach($dataRaw as $key => $param){
-
             $dataRaw = [
                 'Предыдущий период' => 0,
                 'Текущий период' => 0,
             ];
             foreach($param as $string){
+    
                 $dataRaw[config('yandex-config.periods.' . $string['type'])] += $string['value'];
+                if(isset($dataRaw['Текущий период']) && $string['type']  == 'current'){
+                    $service = Str::replace('.', '', $string->service);
+                    $servTranslate = config("yandex-config.services.$service");
+                    $this->dataSlide4[$address][$servTranslate]['params'][$string->param] += $string->value;
+                }
             }
+            
             if(isset($dataRaw['Текущий период']) && $dataRaw['Текущий период'] > $totalValue){
                 $totalValue = $dataRaw['Текущий период'];
                 $total = $key; 
@@ -328,7 +355,91 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
     }
 
     public function slide4($address){
+        $currentSlide = $this->objPHPPowerPoint->createSlide();
 
+        $dataRaw = $this->dataSlide4[$address];
+        $data = [];
+        $cr = [];
+        $total = 0;
+        $totalCr = 0;
+        foreach($dataRaw as $key => $value){
+            $total += $value['total'];
+            foreach($value['params'] as $param => $string){
+                $data[config("yandex-config.params_translate.$param")][$key] = $string;
+                if(!isset($cr[config("yandex-config.params_translate.$param")])){
+                    $cr[config("yandex-config.params_translate.$param")] = 0;
+                }
+                $cr[config("yandex-config.params_translate.$param")] += $string;
+            }
+        }
+
+        $this->createSlideTemplate($currentSlide);
+
+        $this->createSlideTitle($currentSlide, 'СR в профиле');
+
+        $this->createAddressString($currentSlide, $address);
+
+
+        $shape = $currentSlide->createRichTextShape()
+                    ->setHeight(500)
+                    ->setWidth(400)
+                    ->setOffsetX(650)
+                    ->setOffsetY(190);
+        $shape->getActiveParagraph()->setSpacingAfter(16)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
+
+        foreach($cr as $action => $value){
+            $crCurrent = round(($value/$total)*100, 2);
+            $totalCr += $crCurrent;
+            $shape->createParagraph()->setSpacingAfter(16);
+            $textRun = $shape->createTextRun($crCurrent . '% - ' . $action);
+            $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
+                        ->setSize(16)
+                        ->setColor( new Color( '000' ) );
+        }
+        $shape->getActiveParagraph()->setSpacingAfter(16)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
+        $shape->createParagraph()->setSpacingAfter(16);
+        $textRun = $shape->createTextRun($totalCr . '% - Общий CR профиля');
+        $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
+                    ->setSize(16)
+                    ->setColor( new Color( '000' ) );
+
+        $oLine = new Line();
+        $oGridLines = new Gridlines();
+        $oGridLines->getOutline()->setWidth(10);
+        $oGridLines->getOutline()->getFill()->setFillType(Fill::FILL_SOLID)
+                    ->setStartColor(new Color(Color::COLOR_BLUE));
+                    
+        $oShape = $currentSlide->createChartShape()
+                    ->setHeight(500)
+                    ->setWidth(500)
+                    ->setOffsetX(101)
+                    ->setOffsetY(190);
+        $oShape->getPlotArea()->getAxisX()->setMajorGridlines($oGridLines);
+        $oShape->getTitle()->setVisible(false);
+        $oShape->getLegend()->setPosition('b');
+
+        $oBarChart  =  new Bar();
+        $i=0;
+        foreach($data as $key => $param){
+            $color = new Color(config("yandex-config.report_colors.$i"));
+            $series  =  new Series($key, $param); 
+            $series->setLabelPosition(Series::LABEL_OUTSIDEEND);
+            $series->getFill()->setFillType('solid')->setStartColor($color);
+            $oBarChart->addSeries( $series ); 
+            $i++;
+        }
+
+
+        $oBarChart->setBarGrouping( Bar::GROUPING_CLUSTERED ); 
+        $oBarChart->setOverlapWidthPercent(-25);
+
+        $oShape->getPlotArea()->getAxisX()->setTitle('');
+        $oShape->getPlotArea()->getAxisY()->setTitle('');
+        $oShape->getPlotArea()->setType($oBarChart);
+    
+    }
+
+    public function slide5($address){
         $dataRaw = $this->report->params()->where('report_id', $this->report->id)
                                 ->where('type','current')
                                 ->where('address', $address)
@@ -433,7 +544,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
         }    
     }
 
-    public function slide5($address){
+    public function slide6($address){
 
         $dataRaw = $this->report->params()->where('report_id', $this->report->id)
             ->where('address', $address)
@@ -498,7 +609,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
         }    
     }
 
-    public function slide6($address){
+    public function slide7($address){
 
         $dataRaw = $this->report->devices()->where('report_id', $this->report->id)
             ->where('address', $address)
@@ -634,7 +745,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
     }
 
-    public function slide7(){
+    public function slide8(){
    
         $currentSlide = $this->objPHPPowerPoint->createSlide();
 
