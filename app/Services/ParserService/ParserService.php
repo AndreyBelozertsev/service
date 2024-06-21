@@ -24,9 +24,11 @@ class ParserService
 
         $xpath = new DOMXPath($dom);
         $node = $xpath->query("//*[contains(@class, '_name_reviews')]")->item(0);
-        
-        return (int)preg_replace( '/[^0-9]/', '', $node->textContent );
-
+        if($node){ 
+            return (int)preg_replace( '/[^0-9]/', '', $node->textContent );
+        }
+        return false;
+    
     }
 
 }
