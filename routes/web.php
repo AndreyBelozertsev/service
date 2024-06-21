@@ -18,6 +18,8 @@ use App\Http\Controllers\ProfileFeedbackController;
 
 
 
+Route::get('/test', [TestController::class, 'index']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
