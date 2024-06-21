@@ -19,6 +19,7 @@ class FeedbackControlService
         $profile_feedback = [];
         $text = '';
         foreach($profiles as $profile){
+            Log::info(now() . ' - ' . $profile->title);
             $feedback_count = Parser::parserFeedbackCount($profile->yandex_map_url);
             if($feedback_count !== false){
                 Log::info(now() . ' - ' . $profile->title);
