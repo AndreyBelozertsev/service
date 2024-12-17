@@ -70,6 +70,7 @@ class Client extends Section implements Initializable
                     $query->orderBy('created_at', $direction);
                 })
             ,
+            AdminColumn::boolean('status', 'Активный'),
             AdminColumn::text('created_at', 'Дата добавления', 'updated_at')
                 ->setWidth('160px')
                 ->setOrderable(function($query, $direction) {
