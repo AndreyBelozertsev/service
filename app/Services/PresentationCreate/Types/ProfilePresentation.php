@@ -45,6 +45,8 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
     
         $this->slide1($this->objPHPPowerPoint);
 
+        $this->slide8();
+
         foreach($this->addresses as $address){
             $this->slide2($address['address']);
         }
@@ -58,19 +60,17 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
         }
 
         foreach($this->addresses as $address){
-            $this->slide5($address['address']);
+            //$this->slide5($address['address']);
         }
 
         foreach($this->addresses as $address){
-           $this->slide6($address['address']);
+           //$this->slide6($address['address']);
         }
 
 
         foreach($this->addresses as $address){
             $this->slide7($address['address']);
-         }
-
-        $this->slide8();
+        }
 
         return $this->makeFile();
     }
@@ -649,7 +649,7 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
         $this->createSlideTemplate($currentSlide);
 
-        $this->createSlideTitle($currentSlide, 'Типы устройств');
+        $this->createSlideTitle($currentSlide, 'Типы устройств и аудитория');
 
         $this->createAddressString($currentSlide, $address);
         
@@ -668,22 +668,22 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
             $text = "OC Android - $p%";
         }
 
-        $shape = $currentSlide->createRichTextShape()
-                    ->setHeight(500)
-                    ->setWidth(300)
-                    ->setOffsetX(700)
-                    ->setOffsetY(190);
-        $shape->getActiveParagraph()->setSpacingAfter(32)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
-        $textRun = $shape->createTextRun("Владельцы марки - ". $total2['manufacture'] . " занимают $percent% от общего количества посетителей, что является наибольшим значением среди других производителей.");
-        $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
-                    ->setSize(16)
-                    ->setColor( new Color( '000' ) );
+        // $shape = $currentSlide->createRichTextShape()
+        //             ->setHeight(500)
+        //             ->setWidth(300)
+        //             ->setOffsetX(700)
+        //             ->setOffsetY(190);
+        // $shape->getActiveParagraph()->setSpacingAfter(32)->getAlignment()->setHorizontal( Alignment::HORIZONTAL_LEFT );
+        // $textRun = $shape->createTextRun("Владельцы марки - ". $total2['manufacture'] . " занимают $percent% от общего количества посетителей, что является наибольшим значением среди других производителей.");
+        // $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
+        //             ->setSize(16)
+        //             ->setColor( new Color( '000' ) );
 
-        $shape->createParagraph()->setSpacingAfter(32);
-        $textRun = $shape->createTextRun("Основными посетителями являются пользователи  смартфонов с $text");
-        $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
-                    ->setSize(16)
-                    ->setColor( new Color( '000' ) );
+        // $shape->createParagraph()->setSpacingAfter(32);
+        // $textRun = $shape->createTextRun("Основными посетителями являются пользователи  смартфонов с $text");
+        // $textRun->setLanguage('ru-RU')->getFont()->setName('Jura')->setBold(false)
+        //             ->setSize(16)
+        //             ->setColor( new Color( '000' ) );
         
         //Диаграма 1 устройства
         
@@ -716,32 +716,32 @@ class ProfilePresentation extends AbstractPresentationType implements Presentati
 
         //Диаграма 2 тип ОС
 
-        $oLine = new Line();
-        $oGridLines = new Gridlines();
-        $oGridLines->getOutline()->setWidth(10);
-        $oGridLines->getOutline()->getFill()->setFillType(Fill::FILL_SOLID)
-                    ->setStartColor(new Color(Color::COLOR_BLUE));
+        // $oLine = new Line();
+        // $oGridLines = new Gridlines();
+        // $oGridLines->getOutline()->setWidth(10);
+        // $oGridLines->getOutline()->getFill()->setFillType(Fill::FILL_SOLID)
+        //             ->setStartColor(new Color(Color::COLOR_BLUE));
                     
-        $oShape = $currentSlide->createChartShape()
-                    ->setHeight(400)
-                    ->setWidth(300)
-                    ->setOffsetX(350)
-                    ->setOffsetY(190);
-        $oShape->getPlotArea()->getAxisX()->setMajorGridlines($oGridLines);
-        $oShape->getTitle()->setWidth(500)->setText('Смартфоны')->getAlignment()->setHorizontal('ctr');
-        $oShape->getTitle()->getFont()->setSize(14);
+        // $oShape = $currentSlide->createChartShape()
+        //             ->setHeight(400)
+        //             ->setWidth(300)
+        //             ->setOffsetX(350)
+        //             ->setOffsetY(190);
+        // $oShape->getPlotArea()->getAxisX()->setMajorGridlines($oGridLines);
+        // $oShape->getTitle()->setWidth(500)->setText('Смартфоны')->getAlignment()->setHorizontal('ctr');
+        // $oShape->getTitle()->getFont()->setSize(14);
 
-        $seriesData1 = $data2;
+        // $seriesData1 = $data2;
         
-        $oSeries1  =  new Series('Смартфоны', $seriesData1); 
-        $oSeries1->setLabelPosition(Series::LABEL_OUTSIDEEND);
-        $oSeries1->setShowPercentage(true);
-        $oSeries1->setShowValue(false);
+        // $oSeries1  =  new Series('Смартфоны', $seriesData1); 
+        // $oSeries1->setLabelPosition(Series::LABEL_OUTSIDEEND);
+        // $oSeries1->setShowPercentage(true);
+        // $oSeries1->setShowValue(false);
 
-        $oBarChart  =  new Pie();
-        $oBarChart->addSeries( $oSeries1 );
-        $oShape->getPlotArea()->setType($oBarChart);
-        $oShape->getLegend()->setPosition('b');
+        // $oBarChart  =  new Pie();
+        // $oBarChart->addSeries( $oSeries1 );
+        // $oShape->getPlotArea()->setType($oBarChart);
+        // $oShape->getLegend()->setPosition('b');
 
     }
 
